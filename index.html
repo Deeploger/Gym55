@@ -3,198 +3,441 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GYMLkH - Fee Management</title>
+    <title>GYMLkH - Premium Fitness Management</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
+        /* Enhanced CSS */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Arial', sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         body {
             background: linear-gradient(135deg, #1a1a1a, #2d2d2d);
             color: #fff;
+            min-height: 100vh;
         }
 
         .header {
-            background: #111;
+            background: rgba(0, 0, 0, 0.9);
             padding: 1rem 2rem;
             display: flex;
             align-items: center;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
 
         .logo {
-            width: 60px;
-            height: 60px;
-            margin-right: 20px;
+            width: 70px;
+            height: 70px;
+            margin-right: 25px;
+            border-radius: 50%;
+            box-shadow: 0 0 15px #ff6b6b;
         }
 
         .gym-name {
-            font-size: 2.5rem;
-            font-weight: bold;
-            color: #ff6b6b;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            font-size: 2.8rem;
+            font-weight: 800;
+            background: linear-gradient(45deg, #ff6b6b, #ff8e8e);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
         }
 
         .container {
-            padding: 2rem;
-            max-width: 1200px;
+            padding: 3rem;
+            max-width: 1400px;
             margin: 0 auto;
         }
 
         .controls {
             display: flex;
-            gap: 1rem;
-            margin-bottom: 2rem;
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
+            flex-wrap: wrap;
         }
 
         button {
-            padding: 0.8rem 1.5rem;
+            padding: 1rem 2rem;
             border: none;
-            border-radius: 5px;
+            border-radius: 8px;
             cursor: pointer;
             font-weight: bold;
-            transition: transform 0.3s ease;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
-        button:hover {
-            transform: translateY(-2px);
+        button i {
+            font-size: 1.2rem;
         }
 
         .add-btn {
-            background: #4CAF50;
+            background: linear-gradient(45deg, #4CAF50, #45a049);
             color: white;
         }
 
         .remove-btn {
-            background: #f44336;
+            background: linear-gradient(45deg, #f44336, #d32f2f);
             color: white;
+        }
+
+        .search-box {
+            background: rgba(255,255,255,0.1);
+            padding: 0.8rem;
+            border-radius: 8px;
+            flex-grow: 1;
+            max-width: 300px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .search-input {
+            background: transparent;
+            border: none;
+            color: white;
+            width: 100%;
+            font-size: 1rem;
         }
 
         .fee-table {
             width: 100%;
             border-collapse: collapse;
-            background: rgba(255,255,255,0.1);
-            border-radius: 10px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 15px;
             overflow: hidden;
+            box-shadow: 0 0 20px rgba(0,0,0,0.2);
         }
 
         .fee-table th,
         .fee-table td {
-            padding: 1rem;
+            padding: 1.2rem;
             text-align: center;
             border: 1px solid rgba(255,255,255,0.1);
         }
 
         .fee-table th {
-            background: #ff6b6b;
+            background: linear-gradient(45deg, #ff6b6b, #ff8e8e);
             color: white;
+            font-weight: 600;
         }
 
-        .status-dropdown {
-            padding: 5px;
-            border-radius: 3px;
-            border: none;
-            background: rgba(255,255,255,0.9);
+        .status-cell {
+            position: relative;
         }
 
-        .paid {
+        .status-indicator {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 8px;
+        }
+
+        .paid .status-indicator {
             background: #4CAF50;
+            box-shadow: 0 0 8px #4CAF50;
         }
 
-        .due {
+        .due .status-indicator {
             background: #f44336;
+            box-shadow: 0 0 8px #f44336;
         }
 
-        .student-list {
-            margin-top: 2rem;
-            background: rgba(255,255,255,0.1);
-            padding: 1rem;
-            border-radius: 10px;
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: #2d2d2d;
+            padding: 2rem;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 400px;
+            position: relative;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            cursor: pointer;
+            font-size: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.8rem;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.05);
+            color: white;
+            margin-top: 0.5rem;
+        }
+
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: rgba(255,255,255,0.05);
+            padding: 1.5rem;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #ff6b6b;
+            margin: 0.5rem 0;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1.5rem;
+            }
+            
+            .gym-name {
+                font-size: 2rem;
+            }
+            
+            .fee-table th,
+            .fee-table td {
+                padding: 0.8rem;
+            }
         }
     </style>
 </head>
 <body>
     <header class="header">
-        <img src="logo-placeholder.png" alt="GYMLkH Logo" class="logo">
+        <img src="https://via.placeholder.com/70" alt="GYMLkH Logo" class="logo">
         <h1 class="gym-name">GYMLkH</h1>
     </header>
 
     <div class="container">
         <div class="controls">
-            <button class="add-btn" onclick="showAddForm()">Add Student</button>
-            <button class="remove-btn" onclick="showRemoveForm()">Remove Student</button>
+            <button class="add-btn" onclick="showModal('add')">
+                <i class="fas fa-user-plus"></i>
+                Add Student
+            </button>
+            <button class="remove-btn" onclick="showModal('remove')">
+                <i class="fas fa-user-minus"></i>
+                Remove Student
+            </button>
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" class="search-input" placeholder="Search students..." oninput="filterStudents(this.value)">
+            </div>
         </div>
 
-        <table class="fee-table">
-            <thead>
-                <tr>
-                    <th>Student Name</th>
-                    <th>January</th>
-                    <th>February</th>
-                    <th>March</th>
-                    <th>April</th>
-                    <th>May</th>
-                    <th>June</th>
-                </tr>
-            </thead>
-            <tbody id="fee-body">
-                <!-- JavaScript will populate this -->
-            </tbody>
-        </table>
+        <div class="stats-container">
+            <div class="stat-card">
+                <h3>Total Students</h3>
+                <div class="stat-value" id="total-students">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>Paid Fees</h3>
+                <div class="stat-value" id="paid-fees">0%</div>
+            </div>
+            <div class="stat-card">
+                <h3>Active Members</h3>
+                <div class="stat-value" id="active-members">0</div>
+            </div>
+        </div>
+
+        <div class="table-container">
+            <table class="fee-table">
+                <thead>
+                    <tr>
+                        <th>Student Name</th>
+                        <th>Jan</th>
+                        <th>Feb</th>
+                        <th>Mar</th>
+                        <th>Apr</th>
+                        <th>May</th>
+                        <th>Jun</th>
+                        <th>Jul</th>
+                        <th>Aug</th>
+                        <th>Sep</th>
+                        <th>Oct</th>
+                        <th>Nov</th>
+                        <th>Dec</th>
+                    </tr>
+                </thead>
+                <tbody id="fee-body">
+                    <!-- Populated by JavaScript -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Add Student Modal -->
+    <div id="addModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal('add')">&times;</span>
+            <h2>Add New Member</h2>
+            <div class="form-group">
+                <label>Full Name</label>
+                <input type="text" class="form-input" id="studentName">
+            </div>
+            <button class="add-btn" onclick="addStudent()">Add Member</button>
+        </div>
+    </div>
+
+    <!-- Remove Student Modal -->
+    <div id="removeModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal('remove')">&times;</span>
+            <h2>Remove Member</h2>
+            <div class="form-group">
+                <label>Select Member</label>
+                <select class="form-input" id="studentSelect"></select>
+            </div>
+            <button class="remove-btn" onclick="removeStudent()">Remove Member</button>
+        </div>
     </div>
 
     <script>
-        let students = ['John Doe', 'Jane Smith', 'Mike Johnson']; // Initial students
-        
-        function showAddForm() {
-            const name = prompt('Enter student name:');
-            if (name) {
-                students.push(name);
-                updateFeeTable();
-                updateRemoveOptions();
-            }
+        let students = JSON.parse(localStorage.getItem('gymStudents')) || [];
+        let feeRecords = JSON.parse(localStorage.getItem('feeRecords')) || {};
+
+        // Initialize
+        updateFeeTable();
+        updateStats();
+
+        function showModal(type) {
+            document.getElementById(`${type}Modal`).style.display = 'flex';
+            if (type === 'remove') updateRemoveOptions();
         }
 
-        function showRemoveForm() {
-            const studentToRemove = prompt('Enter student name to remove:');
-            if (studentToRemove && students.includes(studentToRemove)) {
-                students = students.filter(student => student !== studentToRemove);
-                updateFeeTable();
-                updateRemoveOptions();
-            }
+        function closeModal(type) {
+            document.getElementById(`${type}Modal`).style.display = 'none';
         }
 
-        function updateFeeTable() {
-            const tbody = document.getElementById('fee-body');
-            tbody.innerHTML = '';
+        function addStudent() {
+            const name = document.getElementById('studentName').value.trim();
+            if (!name) return;
             
-            students.forEach(student => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
+            if (!students.includes(name)) {
+                students.push(name);
+                feeRecords[name] = Array(12).fill('due');
+                updateFeeTable();
+                updateStats();
+                closeModal('add');
+                saveToLocalStorage();
+            }
+            document.getElementById('studentName').value = '';
+        }
+
+        function removeStudent() {
+            const select = document.getElementById('studentSelect');
+            const name = select.options[select.selectedIndex].value;
+            
+            students = students.filter(student => student !== name);
+            delete feeRecords[name];
+            updateFeeTable();
+            updateStats();
+            closeModal('remove');
+            saveToLocalStorage();
+        }
+
+        function updateStatus(student, monthIndex, status) {
+            feeRecords[student][monthIndex] = status;
+            updateStats();
+            saveToLocalStorage();
+        }
+
+        function filterStudents(query) {
+            const filtered = students.filter(student => 
+                student.toLowerCase().includes(query.toLowerCase())
+            );
+            renderTable(filtered);
+        }
+
+        function updateRemoveOptions() {
+            const select = document.getElementById('studentSelect');
+            select.innerHTML = students.map(student => 
+                `<option value="${student}">${student}</option>`
+            ).join('');
+        }
+
+        function updateStats() {
+            document.getElementById('total-students').textContent = students.length;
+            
+            const allPayments = Object.values(feeRecords).flat();
+            const paidCount = allPayments.filter(status => status === 'paid').length;
+            const paidPercentage = students.length > 0 ? 
+                Math.round((paidCount / (students.length * 12)) * 100) : 0;
+            document.getElementById('paid-fees').textContent = `${paidPercentage}%`;
+            
+            const currentMonth = new Date().getMonth();
+            const activeMembers = Object.values(feeRecords).filter(
+                record => record[currentMonth] === 'paid'
+            ).length;
+            document.getElementById('active-members').textContent = activeMembers;
+        }
+
+        function renderTable(data) {
+            const tbody = document.getElementById('fee-body');
+            tbody.innerHTML = data.map(student => `
+                <tr>
                     <td>${student}</td>
-                    ${Array(6).fill().map(() => `
-                        <td>
-                            <select class="status-dropdown" onchange="updateStatus('${student}', this)">
-                                <option value="due">Due</option>
-                                <option value="paid">Paid</option>
+                    ${feeRecords[student].map((status, index) => `
+                        <td class="status-cell ${status}">
+                            <span class="status-indicator"></span>
+                            <select class="status-dropdown" 
+                                    onchange="updateStatus('${student}', ${index}, this.value)"
+                                    value="${status}">
+                                <option value="due" ${status === 'due' ? 'selected' : ''}>Due</option>
+                                <option value="paid" ${status === 'paid' ? 'selected' : ''}>Paid</option>
                             </select>
                         </td>
                     `).join('')}
-                `;
-                tbody.appendChild(row);
-            });
+                </tr>
+            `).join('');
         }
 
-        function updateStatus(student, select) {
-            // Here you would typically send this update to a server
-            console.log(`${student}'s status updated to ${select.value}`);
+        function updateFeeTable() {
+            renderTable(students);
+            updateRemoveOptions();
         }
 
-        // Initialize table
-        updateFeeTable();
+        function saveToLocalStorage() {
+            localStorage.setItem('gymStudents', JSON.stringify(students));
+            localStorage.setItem('feeRecords', JSON.stringify(feeRecords));
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            if (event.target.className === 'modal') {
+                document.querySelectorAll('.modal').forEach(modal => {
+                    modal.style.display = 'none';
+                });
+            }
+        }
     </script>
 </body>
 </html>
