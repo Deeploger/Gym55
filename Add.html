@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Previous head content remains the same -->
+    <style>
+        /* Add this new style for the add student button */
+        .add-student-btn {
+            position: fixed;
+            top: 85px;
+            left: 120px; /* Positioned to the right of home button */
+            z-index: 1000;
+            background: var(--success);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 5px;
+            font-weight: 500;
+            text-decoration: none;
+            display: none; /* Hidden by default */
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .add-student-btn:hover {
+            background: #3aa8d1;
+            transform: translateY(-2px);
+        }
+        
+        .add-student-btn i {
+            margin-right: 5px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Previous top-bar and other HTML remains the same -->
+    
+    <!-- Home Button -->
+    <a href="#" class="home-button" id="homeBtn">
+        <i class="fas fa-home"></i> Home
+    </a>
+    
+    <!-- Add Student Button (hidden by default) -->
+    <a href="#" class="add-student-btn" id="addStudentBtn">
+        <i class="fas fa-user-plus"></i> Add Student
+    </a>
+    
+    <!-- Previous container content remains the same -->
+    
+    <script>
+        // Add this JavaScript to handle the button behavior
+        document.getElementById('homeBtn').addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            const addStudentBtn = document.getElementById('addStudentBtn');
+            
+            // Toggle the display of the add student button
+            if (addStudentBtn.style.display === 'flex') {
+                addStudentBtn.style.display = 'none';
+            } else {
+                addStudentBtn.style.display = 'flex';
+            }
+        });
+        
+        // Optional: Hide the add student button when clicking elsewhere
+        document.addEventListener('click', function(e) {
+            const addStudentBtn = document.getElementById('addStudentBtn');
+            const homeBtn = document.getElementById('homeBtn');
+            
+            if (e.target !== homeBtn && e.target !== addStudentBtn) {
+                addStudentBtn.style.display = 'none';
+            }
+        });
+        
+        // Handle click on the add student button
+        document.getElementById('addStudentBtn').addEventListener('click', function(e) {
+            e.preventDefault();
+            alert('Redirecting to add student page...');
+            // In a real application, you would redirect to the add student page
+            // window.location.href = 'add-student.html';
+        });
+    </script>
+</body>
+</html>
